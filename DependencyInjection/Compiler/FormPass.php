@@ -24,7 +24,7 @@ class FormPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $template = "@ComurImage/Form/fields.html.twig";
         $resources = $container->getParameter('twig.form.resources');
@@ -54,6 +54,5 @@ class FormPass implements CompilerPassInterface
 
             $container->setParameter('twig.form.resources', $resources);
         }
-        // var_dump($resources);exit;
     }
 }

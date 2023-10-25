@@ -3,6 +3,7 @@
 namespace Comur\ImageBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+
 // use Symfony\Component\Form\FormBuilder;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,7 +21,7 @@ class CroppableImageType extends AbstractType
     protected $galleryDir = null;
     protected $thumbsDir = null;
 
-    static $uploadConfig = array(
+    static $uploadConfig = [
         'uploadRoute' => 'comur_api_upload',
         'uploadUrl' => null, // DEPRECATED
         'uploadDir' => null,
@@ -31,10 +32,10 @@ class CroppableImageType extends AbstractType
         'libraryRoute' => 'comur_api_image_library',
         'showLibrary' => true,
         'saveOriginal' => false, //save original file name
-        'generateFilename' => true //generate an uniq filename
-    );
+        'generateFilename' => true, //generate an uniq filename
+    ];
 
-    static $cropConfig = array(
+    static $cropConfig = [
         // 'disableCrop' => false,
         'minWidth' => 1,
         'minHeight' => 1,
@@ -42,15 +43,15 @@ class CroppableImageType extends AbstractType
         'cropRoute' => 'comur_api_crop',
         'forceResize' => false,
         'thumbs' => null,
-        'disable' => false
-    );
+        'disable' => false,
+    ];
 
     // public function getParent()
     // {
     //     return 'text';
     // }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'comur_image';
     }
@@ -58,7 +59,7 @@ class CroppableImageType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
         // if($options['uploadConfig']['saveOriginal']){
@@ -66,15 +67,17 @@ class CroppableImageType extends AbstractType
         // }
         // var_dump($builder->getDataMapper());exit;
         if ($options['uploadConfig']['saveOriginal']) {
-            $builder->add($options['uploadConfig']['saveOriginal'], TextType::class, array(
+            $builder->add($options['uploadConfig']['saveOriginal'], TextType::class, [
                 // 'inherit_data' => true,
                 // 'property_path' => $options['uploadConfig']['saveOriginal'],
-                'attr' => array('style' => 'opacity: 0;width: 0; max-width: 0; height: 0; max-height: 0;')));
+                'attr' => ['style' => 'opacity: 0;width: 0; max-width: 0; height: 0; max-height: 0;'],
+            ]);
         }
-        $builder->add($builder->getName(), TextType::class, array(
+        $builder->add($builder->getName(), TextType::class, [
             // 'property_path' => $builder->getName(),
             // 'inherit_data' => true,
-            'attr' => array('style' => 'opacity: 0;width: 0; max-width: 0; height: 0; max-height: 0;')));
+            'attr' => ['style' => 'opacity: 0;width: 0; max-width: 0; height: 0; max-height: 0;'],
+        ]);
     }
 
     /**
@@ -84,7 +87,8 @@ class CroppableImageType extends AbstractType
      * @param $galleryDir
      * @return \Closure
      */
-    public static function getUploadConfigNormalizer($uploadConfig, $isGallery = false, $galleryDir = null) {
+    public static function getUploadConfigNormalizer($uploadConfig, $isGallery = false, $galleryDir = null)
+    {
         return function (Options $options, $value) use ($uploadConfig, $isGallery, $galleryDir) {
             $config = array_merge($uploadConfig, $value);
 
@@ -125,7 +129,8 @@ class CroppableImageType extends AbstractType
      * @param $cropConfig
      * @return \Closure
      */
-    public static function getCropConfigNormalizer($cropConfig) {
+    public static function getCropConfigNormalizer($cropConfig)
+    {
         return function (Options $options, $value) use ($cropConfig) {
             return array_merge($cropConfig, $value);
         };
@@ -134,12 +139,12 @@ class CroppableImageType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $uploadConfig = self::$uploadConfig;
         $cropConfig = self::$cropConfig;
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'uploadConfig' => $uploadConfig,
             'cropConfig' => $cropConfig,
             // 'compound' => function(Options $options, $value) use($cropConfig){
@@ -148,16 +153,18 @@ class CroppableImageType extends AbstractType
             'inherit_data' => true,
             // 'property_path' => null,
             // 'data_class' => 'MVB\Bundle\MemberBundle\Entity\Member'
-        ));
+        ]);
 
         $isGallery = $this->isGallery;
         $galleryDir = $this->galleryDir;
 
         $resolver->setNormalizer(
-            'uploadConfig', self::getUploadConfigNormalizer($uploadConfig, $isGallery, $galleryDir)
+            'uploadConfig',
+            self::getUploadConfigNormalizer($uploadConfig, $isGallery, $galleryDir)
         );
         $resolver->setNormalizer(
-            'cropConfig', self::getCropConfigNormalizer($cropConfig)
+            'cropConfig',
+            self::getCropConfigNormalizer($cropConfig)
         );
 
     }
@@ -173,7 +180,7 @@ class CroppableImageType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $originalPhotoFieldId = null;
 
@@ -189,12 +196,16 @@ class CroppableImageType extends AbstractType
             }
         }
 
-        $view->vars['options'] = array('uploadConfig' => $uploadConfig, 'cropConfig' => $cropConfig, 'fieldImage' => $fieldImage);
+        $view->vars['options'] = [
+            'uploadConfig' => $uploadConfig,
+            'cropConfig' => $cropConfig,
+            'fieldImage' => $fieldImage,
+        ];
         $view->vars['attr'] = array_merge(
-            isset($options['attr']) ? $options['attr'] : array(),
-            array(
-                'style' => 'opacity: 0;width: 0; max-width: 0; height: 0; max-height: 0;'
-            )
+            isset($options['attr']) ? $options['attr'] : [],
+            [
+                'style' => 'opacity: 0;width: 0; max-width: 0; height: 0; max-height: 0;',
+            ]
         );
     }
 }

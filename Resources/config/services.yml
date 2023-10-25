@@ -20,5 +20,6 @@ services:
 
     Comur\ImageBundle\Controller\:
         autowire: true
+        public: true
         resource: '../../Controller'
-        tags: ['controller.service_arguments']
+        tags: ['controller.service_arguments', 'container.service_subscriber']
