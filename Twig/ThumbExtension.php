@@ -1,4 +1,5 @@
 <?php
+
 namespace Comur\ImageBundle\Twig;
 
 use Twig\Extension\AbstractExtension;
@@ -22,12 +23,12 @@ class ThumbExtension extends AbstractExtension implements GlobalsInterface
         $this->galleryDir = $galleryDir;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
-        return array(
-            new TwigFilter('thumb', array($this, 'getThumb')),
-            new TwigFilter('gallery_thumb', array($this, 'getGalleryThumb')),
-        );
+        return [
+            new TwigFilter('thumb', [$this, 'getThumb']),
+            new TwigFilter('gallery_thumb', [$this, 'getGalleryThumb']),
+        ];
     }
 
     /**
@@ -37,37 +38,33 @@ class ThumbExtension extends AbstractExtension implements GlobalsInterface
      * @param integer $height desired thumb's height
      * @return string thumbnail path if thumbnail exists, if not returns original file path
      */
-    public function getThumb($origFilePath, $width, $height)
+    public function getThumb($origFilePath, $width, $height): string
     {
         $pathInfo = pathinfo($origFilePath);
-        if(isset($pathInfo['dirname']) && isset($pathInfo['basename']))
-        {
+        if (isset($pathInfo['dirname']) && isset($pathInfo['basename'])) {
             $uploadDir = $pathInfo['dirname'] . '/';
             $filename = $pathInfo['basename'];
 
-            $thumbSrc = $uploadDir . $this->thumbsDir . '/' . $width . 'x' . $height . '-' .$filename;
+            $thumbSrc = $uploadDir . $this->thumbsDir . '/' . $width . 'x' . $height . '-' . $filename;
 
-            // return $this->webDir.'/'.$thumbSrc;
             return $thumbSrc;
-
-            // return file_exists($this->webDir.'/'.$thumbSrc) ? $thumbSrc : $uploadDir . $filename;
         }
 
         return $origFilePath;
     }
 
-    public function getGalleryThumb($origFilePath, $width, $height)
+    public function getGalleryThumb($origFilePath, $width, $height): string
     {
-        return $this->getThumb($this->galleryDir.'/'.$origFilePath, $width, $height);
+        return $this->getThumb($this->galleryDir . '/' . $origFilePath, $width, $height);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'comur_thumb_extension';
     }
 
     public function getGlobals(): array
     {
-        return array('comur_translation_domain' => $this->transDomain);
+        return ['comur_translation_domain' => $this->transDomain];
     }
 }
